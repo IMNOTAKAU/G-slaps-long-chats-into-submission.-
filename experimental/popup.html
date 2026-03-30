@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 260px;
+      background: #0f0f1a;
+      color: #e0e0e0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13px;
+      padding: 16px;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #1e1e3a;
+    }
+
+    .title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #7c83ff;
+    }
+
+    .toggle-wrap {
+      position: relative;
+    }
+
+    .toggle {
+      appearance: none;
+      width: 38px;
+      height: 20px;
+      background: #2a2a4e;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.2s;
+      position: relative;
+    }
+
+    .toggle:checked {
+      background: #7c83ff;
+    }
+
+    .toggle::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 16px;
+      height: 16px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.2s;
+    }
+
+    .toggle:checked::after {
+      transform: translateX(18px);
+    }
+
+    .setting {
+      margin-bottom: 14px;
+    }
+
+    .setting label {
+      display: block;
+      color: #888;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    .setting input[type="range"] {
+      width: 100%;
+      accent-color: #7c83ff;
+    }
+
+    .setting .value {
+      text-align: right;
+      color: #7c83ff;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .status {
+      background: #1a1a2e;
+      border-radius: 6px;
+      padding: 10px;
+      margin-top: 12px;
+      font-size: 11px;
+      color: #666;
+      text-align: center;
+    }
+
+    .status.active {
+      color: #4ade80;
+    }
+
+    .footer {
+      margin-top: 12px;
+      text-align: center;
+      font-size: 10px;
+      color: #444;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <span class="title">⚡ Claude Turbo</span>
+    <div class="toggle-wrap">
+      <input type="checkbox" class="toggle" id="enabled" checked>
+    </div>
+  </div>
+
+  <div class="setting">
+    <label>Messages to keep visible</label>
+    <input type="range" id="keepVisible" min="10" max="100" step="5" value="30">
+    <div class="value" id="keepValue">30</div>
+  </div>
+
+  <div class="status" id="status">
+    Waiting for Claude.ai...
+  </div>
+
+  <div class="footer">
+    No data collected. Runs locally only.
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
