@@ -346,7 +346,7 @@
     if (statusBadge && document.contains(statusBadge)) return;
     statusBadge = document.createElement('div');
     statusBadge.id = 'g-slaps-badge';
-    statusBadge.style.cssText = 'position:fixed;top:50%;transform:translateY(-50%);background:#1a1a2e;color:#7c83ff;font-family:SF Mono,Fira Code,monospace;font-size:11px;padding:6px 10px;border-radius:6px;z-index:99999;opacity:0.75;transition:opacity 0.3s,left 0.3s;pointer-events:none;border:1px solid #2a2a4e;user-select:none;';
+    statusBadge.style.cssText = 'position:fixed;bottom:12px;text-align:center;line-height:1.6;background:#1a1a2e;color:#7c83ff;font-family:SF Mono,Fira Code,monospace;font-size:11px;padding:8px 14px;border-radius:8px;z-index:99999;opacity:0.75;transition:opacity 0.3s,left 0.3s;pointer-events:none;border:1px solid #2a2a4e;user-select:none;';
     document.body.appendChild(statusBadge);
     positionBadge();
     window.addEventListener('resize', positionBadge);
@@ -354,36 +354,42 @@
 
   function positionBadge() {
     if (!statusBadge) return;
-    const mc = messageContainer || document.querySelector('.flex-1.flex.flex-col.px-4.max-w-3xl') || document.querySelector('[data-message-id]');
-    if (mc) {
-      const rect = mc.getBoundingClientRect();
-      const gap = window.innerWidth - rect.right;
-      statusBadge.style.left = (rect.right + (gap - statusBadge.offsetWidth) / 2) + 'px';
+    // Find the visual right edge of content — use a message element, not the container
+    let rightEdge = 0;
+    if (messageContainer) {
+      const msg = messageContainer.querySelector('[data-message-id]') || messageContainer.children[0];
+      if (msg) rightEdge = msg.getBoundingClientRect().right;
+      if (!rightEdge) rightEdge = messageContainer.getBoundingClientRect().right;
+    }
+    const gap = window.innerWidth - rightEdge;
+    if (rightEdge && gap > 80) {
+      statusBadge.style.transform = 'translateX(-50%)';
+      statusBadge.style.left = (rightEdge + gap / 2) + 'px';
+      statusBadge.style.right = '';
     } else {
-      statusBadge.style.right = '40px';
+      statusBadge.style.transform = '';
+      statusBadge.style.left = '';
+      statusBadge.style.right = '50px';
     }
   }
 
   function updateBadge(collapsedCount, totalCount) {
     createBadge();
+    positionBadge();
     // Push stats to storage for popup
     if (typeof chrome !== 'undefined' && chrome.storage) {
       chrome.storage.local.set({ stats: { collapsed: collapsedCount, visible: totalCount - collapsedCount, total: totalCount } });
     }
     if (!isEnabled) {
-      statusBadge.textContent = '\u26A1 OFF';
+      statusBadge.textContent = 'OFF';
       statusBadge.style.color = '#666';
       return;
     }
     if (collapsedCount === 0 && totalCount === 0) {
-      statusBadge.textContent = '\u26A1 scanning...';
+      statusBadge.textContent = 'scanning...';
       statusBadge.style.color = '#888';
-    } else if (collapsedCount === 0) {
-      statusBadge.textContent = '\u26A1 ' + totalCount + ' msgs';
-      statusBadge.style.color = '#4ade80';
     } else {
-      statusBadge.textContent = '\u26A1 ' + collapsedCount + '\u2193 ' + (totalCount - collapsedCount) + '\u2191 / ' + totalCount;
-      statusBadge.style.color = '#7c83ff';
+      statusBadge.innerHTML = '<div style="color:#4ade80">' + (totalCount - collapsedCount) + ' live</div><div style="color:#f87171">' + collapsedCount + ' slapped</div><div style="color:#888">' + totalCount + ' total</div>';
     }
   }
 
