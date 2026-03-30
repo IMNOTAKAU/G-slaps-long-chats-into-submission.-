@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "Chat Turbo",
+  "name": "G Slaps",
   "version": "1.0.0",
   "description": "Fixes lag in long conversations by virtualizing off-screen messages. Works on Claude.ai and ChatGPT.",
-  "permissions": ["storage"],
+  "permissions": ["storage", "activeTab"],
   "host_permissions": ["https://claude.ai/*", "https://chatgpt.com/*", "https://chat.openai.com/*"],
   "content_scripts": [
     {

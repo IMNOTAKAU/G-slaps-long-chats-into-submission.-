@@ -49,7 +49,7 @@
   }
 
   function log(...args) {
-    if (CONFIG.DEBUG) console.log('[Claude Turbo]', ...args);
+    if (CONFIG.DEBUG) console.log('[G Slaps]', ...args);
   }
 
   // ── Site-specific container finders ──
@@ -119,7 +119,7 @@
   function findMessages() {
     if (!messageContainer) return [];
     return Array.from(messageContainer.children).filter(el =>
-      !el.dataset.claudeTurboSpacer && el.tagName !== 'SCRIPT' && el.tagName !== 'STYLE'
+      !el.dataset.gSlapsSpacer && el.tagName !== 'SCRIPT' && el.tagName !== 'STYLE'
     );
   }
 
@@ -132,8 +132,8 @@
     restoreObserver = new IntersectionObserver((entries) => {
       let changed = false;
       for (const entry of entries) {
-        if (entry.isIntersecting && entry.target._turboEl) {
-          doRestore(entry.target._turboEl);
+        if (entry.isIntersecting && entry.target._slapsEl) {
+          doRestore(entry.target._slapsEl);
           changed = true;
         }
       }
@@ -197,8 +197,8 @@
 
     const spacer = document.createElement('div');
     spacer.style.cssText = 'height:' + totalHeight + 'px;min-height:' + totalHeight + 'px;width:100%;pointer-events:none;';
-    spacer.dataset.claudeTurboSpacer = 'true';
-    spacer._turboEl = el;
+    spacer.dataset.gSlapsSpacer = 'true';
+    spacer._slapsEl = el;
 
     selfMutating = true;
     el.parentNode.replaceChild(spacer, el);
@@ -264,8 +264,8 @@
       if (!m) continue;
       const spacer = document.createElement('div');
       spacer.style.cssText = 'height:' + m.totalHeight + 'px;min-height:' + m.totalHeight + 'px;width:100%;pointer-events:none;';
-      spacer.dataset.claudeTurboSpacer = 'true';
-      spacer._turboEl = m.el;
+      spacer.dataset.gSlapsSpacer = 'true';
+      spacer._slapsEl = m.el;
 
       m.el.parentNode.replaceChild(spacer, m.el);
       collapsed.set(m.el, { spacer, height: m.totalHeight });
@@ -341,13 +341,31 @@
   function createBadge() {
     if (statusBadge && document.contains(statusBadge)) return;
     statusBadge = document.createElement('div');
-    statusBadge.id = 'claude-turbo-badge';
-    statusBadge.style.cssText = 'position:fixed;bottom:12px;right:12px;background:#1a1a2e;color:#7c83ff;font-family:SF Mono,Fira Code,monospace;font-size:11px;padding:6px 10px;border-radius:6px;z-index:99999;opacity:0.75;transition:opacity 0.2s;pointer-events:none;border:1px solid #2a2a4e;user-select:none;';
+    statusBadge.id = 'g-slaps-badge';
+    statusBadge.style.cssText = 'position:fixed;top:50%;transform:translateY(-50%);background:#1a1a2e;color:#7c83ff;font-family:SF Mono,Fira Code,monospace;font-size:11px;padding:6px 10px;border-radius:6px;z-index:99999;opacity:0.75;transition:opacity 0.3s,left 0.3s;pointer-events:none;border:1px solid #2a2a4e;user-select:none;';
     document.body.appendChild(statusBadge);
+    positionBadge();
+    window.addEventListener('resize', positionBadge);
+  }
+
+  function positionBadge() {
+    if (!statusBadge) return;
+    const mc = messageContainer || document.querySelector('.flex-1.flex.flex-col.px-4.max-w-3xl') || document.querySelector('[data-message-id]');
+    if (mc) {
+      const rect = mc.getBoundingClientRect();
+      const gap = window.innerWidth - rect.right;
+      statusBadge.style.left = (rect.right + (gap - statusBadge.offsetWidth) / 2) + 'px';
+    } else {
+      statusBadge.style.right = '40px';
+    }
   }
 
   function updateBadge(collapsedCount, totalCount) {
     createBadge();
+    // Push stats to storage for popup
+    if (typeof chrome !== 'undefined' && chrome.storage) {
+      chrome.storage.local.set({ stats: { collapsed: collapsedCount, visible: totalCount - collapsedCount, total: totalCount } });
+    }
     if (!isEnabled) {
       statusBadge.textContent = '\u26A1 OFF';
       statusBadge.style.color = '#666';
@@ -387,7 +405,7 @@
   urlObserver.observe(document.body, { childList: true, subtree: true });
 
   function boot() {
-    log('Claude Turbo EXP starting...');
+    log('G Slaps EXP starting...');
     createBadge();
     updateBadge(0, 0);
 

@@ -1,4 +1,4 @@
-# Chat Turbo
+# G Slaps
 
 Chrome extension that fixes lag in long AI chat conversations by virtualizing off-screen messages.
 
@@ -10,7 +10,7 @@ Long conversations (500+ messages) on Claude.ai and ChatGPT become painfully slo
 
 ## How It Works
 
-Chat Turbo collapses old messages that aren't on screen, replacing them with lightweight spacer divs that preserve scroll position. When you scroll up, messages are seamlessly restored. When you scroll away, they collapse again.
+G Slaps collapses old messages that aren't on screen, replacing them with lightweight spacer divs that preserve scroll position. When you scroll up, messages are seamlessly restored. When you scroll away, they collapse again.
 
 - **No data collected** — runs entirely in your browser
 - **No API calls** — pure DOM manipulation
